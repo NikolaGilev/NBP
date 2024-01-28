@@ -62,3 +62,67 @@ the full list of installed packages will be in the "Pipfile" or we can generate 
 ```sh
 $ pipenv requirements > requirements.txt
 ```
+
+Tables look like this:
+
+```sql
+table collections
+id int primary key
+name string
+
+table genres
+id int primary key
+name string
+
+table production_companies
+id int primary key
+name string
+
+table production_countries
+id int primary key
+iso string
+name string
+
+table movies
+id int primary key
+imdb_id string
+title string
+for_adults bollean
+collections id int (1 collections -to-many movies)
+budget bigint
+genres id int (many to many)
+production_companies id int
+production_countries id int
+original_language string
+original_title string
+overview string
+popularity bigint
+release_date date
+revenue bigint
+runtime int
+vote_average float
+vote_count int
+keywords int (many to many relationship)
+
+table cast
+id int primary key
+name string
+character string
+gender int
+
+table crew
+id int primary key
+department string
+job string
+gender string
+name string
+
+table credits
+id int primary key
+cast id int (many credits - to-many casts)
+crew id int (many credits - to-many crew)
+
+table keywords
+id int primary key
+name string
+```
