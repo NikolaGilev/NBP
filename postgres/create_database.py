@@ -1,36 +1,39 @@
-import pandas as pd
-from sqlalchemy import create_engine
 import psycopg2
-import io
+from sqlalchemy import create_engine
+import pandas as pd
 
+# Database connection parameters
+db_params = {
+    "user": "postgres",
+    "password": "postgres",
+    "dbname": "nbp",
+    "host": "localhost",
+    "port": 5433,
+}
 
-def main():
-    engine = create_engine(
-        "postgresql+psycopg2://postgres:postgres@localhost:5432/movies_db"
-    )
-    df_credits.to_sql("Credits", engine)
+# Create a connection to the PostgreSQL database
+conn = psycopg2.connect(**db_params)
 
-    # # Drop old table and create new empty table
-    # df.head(0).to_sql("table_name", engine, if_exists="replace", index=False)
+# File paths
+cast_csv_path = "cast.csv"
+crew_csv_path = "crew.csv"
 
-    # conn = engine.raw_connection()
-    # cur = conn.cursor()
-    # output = io.StringIO()
-    # df.to_csv(output, sep="\t", header=False, index=False)
-    # output.seek(0)
-    # contents = output.getvalue()
-    # cur.copy_from(output, "table_name", null="")  # null values become ''
-    # conn.commit()
-    # cur.close()
-    # conn.close()
+# Read CSV files into DataFrames
+cast_df = pd.read_csv(cast_csv_path)
+crew_df = pd.read_csv(crew_csv_path)
 
+# Define table names
+cast_table_name = "cast"
+crew_table_name = "crew"
 
-def create_df():
-    working_dir = "datasets/movies_db/"
-    df_credits = pd.read_csv(working_dir + "credits.csv")
+# Create a SQLAlchemy engine
+engine = create_engine(
+    f'postgresql://{db_params["user"]}:{db_params["password"]}@{db_params["host"]}:{db_params["port"]}/{db_params["dbname"]}'
+)
 
-    print(df)
+# Write DataFrames to PostgreSQL tables
+cast_df.to_sql(cast_table_name, engine, if_exists="replace", index=False)
+crew_df.to_sql(crew_table_name, engine, if_exists="replace", index=False)
 
-
-if __name__ == "__main__":
-    create_df()
+# Close the connection
+conn.close()
