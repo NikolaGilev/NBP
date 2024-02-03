@@ -2,7 +2,7 @@ import pandas as pd
 
 
 def main():
-    working_dir = "../datasets/movies_db/"
+    working_dir = "../datasets/"
     df_movies = pd.read_csv(working_dir + "movies_metadata.csv")
 
     columns_to_remove = [
@@ -22,4 +22,7 @@ def main():
     df_movies = df_movies.drop(columns=columns_to_remove)
     df_movies = df_movies.rename(columns={"adult": "for_adults"})
 
-    df.to_csv("output_movies.csv", index=False)
+    df_movies.to_csv("output_movies.csv", index=False)
+
+
+main()
