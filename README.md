@@ -90,12 +90,12 @@ CREATE TABLE production_countries (
 CREATE TABLE movie_genre (
     movie_id INT,
     genre_id INT
-)
+);
 
 CREATE TABLE movie_keyword (
     movie_id INT,
     keyword_id INT
-)
+);
 
 CREATE TABLE movies (
     id SERIAL PRIMARY KEY,
