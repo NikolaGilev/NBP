@@ -15,10 +15,8 @@ CREATE TABLE movies (
     imdb_id VARCHAR(20) NOT NULL,
     title VARCHAR(255) NOT NULL,
     for_adults BOOLEAN,
-    collections_id INT,
+    collections_id INT, -- ??
     budget BIGINT,
-    production_companies_id INT,
-    production_countries_id INT,
     original_language VARCHAR(10) NOT NULL,
     original_title VARCHAR(255) NOT NULL,
     overview TEXT,
