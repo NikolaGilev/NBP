@@ -1,33 +1,14 @@
 CREATE TABLE collections (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+    name VARCHAR(255) NOT NULL,
+    movie_id INT,
 );
 
 CREATE TABLE genres (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE production_companies (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE production_countries (
-    id SERIAL PRIMARY KEY,
-    iso VARCHAR(5) NOT NULL,
-    name VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE movie_genre (
+    name VARCHAR(255) NOT NULL,
     movie_id INT,
-    genre_id INT
-)
-
-CREATE TABLE movie_keyword (
-    movie_id INT,
-    keyword_id INT
-)
+);
 
 CREATE TABLE movies (
     id SERIAL PRIMARY KEY,
@@ -67,5 +48,6 @@ CREATE TABLE crew (
 CREATE TABLE keywords (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL
+    movie_id INT,
 );
 
