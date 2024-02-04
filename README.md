@@ -119,3 +119,27 @@ CREATE TABLE keywords (
     movie_id INT,
 );
 ```
+
+## Importing data in PostgreSQL through csv files
+
+...
+
+## Importing data in Neo4j through csv files
+
+Firstly, we need to add the csv files in the working import directory of neo4j.
+After locating the dir: 'C:\Users\kok1\_\.Neo4jDesktop\relate-data\dbmss\dbms-2a3a6e7e-b292-4907-a6a0-e5426c5449fc', we need to add all the csv files in the '/import' folder.
+
+After doing this we can run this query which creates nodes and fills them with the data we provide through the aforementioned csvs:
+
+```cql
+LOAD CSV WITH HEADERS FROM 'file:///collections.csv' AS row
+CREATE (:Collection {
+   id: toInteger(row.id),
+   name: row.name,
+   poster_path: row.poster_path,
+   backdrop_path: row.backdrop_path,
+   movie_id: toInteger(row.movie_id)
+});
+```
+
+Above example is for collections, but similar queries can be easily constructed for all the other nodes.
