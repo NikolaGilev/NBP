@@ -228,7 +228,7 @@ WHERE m.budget > 60000000
 RETURN m;
 ```
 
-> ![](images/neo_s_q1.PNG)
+> ![](images/neo4j/neo_s_q1.PNG)
 > Started streaming 820 records after 8 ms and completed after 1135 ms.
 
 PSQL:
@@ -249,7 +249,7 @@ WHERE c.name = 'Robin Williams'
 RETURN c;
 ```
 
-> ![](images/neo_s_q2.PNG)
+> ![](images/neo4j/neo_s_q2.PNG)
 > Started streaming 22 records after 60 ms and completed after 926 ms.
 
 PSQL:
@@ -270,7 +270,7 @@ WHERE crew.job = 'Director'
 RETURN crew;
 ```
 
-> ![](images/neo_s_q3.PNG)
+> ![](images/neo4j/neo_s_q3.PNG)
 > Started streaming 4675 records after 7 ms and completed after 240 ms, displaying first 1000 rows.
 
 PSQL:
@@ -291,7 +291,7 @@ WHERE g.name = 'Comedy'
 RETURN g;
 ```
 
-> ![](images/neo_s_q4.PNG)
+> ![](images/neo4j/neo_s_q4.PNG)
 > Started streaming 13182 records after 6 ms and completed after 355 ms, displaying first 1000 rows.
 
 PSQL:
@@ -334,7 +334,7 @@ WHERE c.name = 'Robin Williams'
 RETURN m, c, cr;
 ```
 
-> ![](images/neo_j_q1.PNG)
+> ![](images/neo4j/neo_j_q1.PNG)
 > Started streaming 4 records after 15 ms and completed after 336 ms.
 
 PSQL:
@@ -358,7 +358,7 @@ MATCH (m:Movie),
 RETURN m,c,g;
 ```
 
-> ![](images/neo_j_q2.PNG)
+> ![](images/neo4j/neo_j_q2.PNG)
 > Started streaming 15 records after 33 ms and completed after 97 ms.
 
 PSQL:
@@ -383,7 +383,7 @@ MATCH (m:Movie)-[:HAS_CAST]->(c:Cast),
 RETURN m, c, g, crew, keyword;
 ```
 
-> ![](images/neo_j_q3.PNG)
+> ![](images/neo4j/neo_j_q3.PNG)
 > Started streaming 23635 records after 24 ms and completed after 898 ms, displaying first 1000 rows.
 
 PSQL:
@@ -410,7 +410,7 @@ ORDER BY movieCount DESC
 LIMIT 5;
 ```
 
-> ![](images/neo_a_q1.PNG)
+> ![](images/neo4j/neo_a_q1.PNG)
 > Started streaming 5 records after 1 ms and completed after 185 ms.
 
 PSQL:
@@ -437,7 +437,7 @@ RETURN g.name, topMovie.title, topMovie.revenue
 ORDER BY g.name;
 ```
 
-> ![](images/neo_a_q2.PNG)
+> ![](images/neo4j/neo_a_q2.PNG)
 > Started streaming 91094 records after 17 ms and completed after 1846 ms, displaying first 1000 rows.
 
 PSQL:
@@ -470,7 +470,7 @@ RETURN releaseYear, AVG(m.runtime) AS averageRuntime
 ORDER BY releaseYear;
 ```
 
-> ![](images/neo_a_q3.PNG)
+> ![](images/neo4j/neo_a_q3.PNG)
 > Started streaming 139 records after 11 ms and completed after 190 ms.
 
 PSQL:
@@ -495,7 +495,7 @@ RETURN c.name, COUNT(m) AS movieCount, SUM(m.revenue) AS totalRevenue
 ORDER BY totalRevenue DESC, movieCount DESC;
 ```
 
-> ![](images/neo_a_q4.PNG)
+> ![](images/neo4j/neo_a_q4.PNG)
 > Started streaming 15331 records after 16 ms and completed after 251 ms, displaying first 1000 rows.
 
 PSQL:

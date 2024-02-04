@@ -4,10 +4,10 @@ import pandas as pd
 
 db_params = {
     "user": "postgres",
-    "password": "123",
+    "password": "postgres",
     "dbname": "nbp",
     "host": "localhost",
-    "port": 5432,
+    "port": 5433,
 }
 
 conn = psycopg2.connect(**db_params)
@@ -37,6 +37,11 @@ movies_table_name = "movies"
 engine = create_engine(
     f'postgresql://{db_params["user"]}:{db_params["password"]}@{db_params["host"]}:{db_params["port"]}/{db_params["dbname"]}'
 )
+
+cast_df.drop(["order"], axis=1, inplace=True)
+collection_df.drop(columns=[" "], axis=1, inplace=True)
+genres_df.drop(columns=[" "], axis=1, inplace=True)
+movies_df.drop_duplicates(subset="id", keep="first", inplace=True)
 
 cast_df.to_sql(cast_table_name, engine, if_exists="append", index=False)
 collection_df.to_sql(collection_table_name, engine, if_exists="append", index=False)
