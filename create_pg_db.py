@@ -4,10 +4,10 @@ import pandas as pd
 
 db_params = {
     "user": "postgres",
-    "password": "postgres",
+    "password": "123",
     "dbname": "nbp",
     "host": "localhost",
-    "port": 5433,
+    "port": 5432,
 }
 
 conn = psycopg2.connect(**db_params)
@@ -38,12 +38,12 @@ engine = create_engine(
     f'postgresql://{db_params["user"]}:{db_params["password"]}@{db_params["host"]}:{db_params["port"]}/{db_params["dbname"]}'
 )
 
-cast_df.to_sql(cast_table_name, engine, if_exists="replace", index=False)
-collection_df.to_sql(collection_table_name, engine, if_exists="replace", index=False)
-crew_df.to_sql(crew_table_name, engine, if_exists="replace", index=False)
-genres_df.to_sql(genres_table_name, engine, if_exists="replace", index=False)
-keywords_df.to_sql(keywords_table_name, engine, if_exists="replace", index=False)
-movies_df.to_sql(movies_table_name, engine, if_exists="replace", index=False)
+cast_df.to_sql(cast_table_name, engine, if_exists="append", index=False)
+collection_df.to_sql(collection_table_name, engine, if_exists="append", index=False)
+crew_df.to_sql(crew_table_name, engine, if_exists="append", index=False)
+genres_df.to_sql(genres_table_name, engine, if_exists="append", index=False)
+keywords_df.to_sql(keywords_table_name, engine, if_exists="append", index=False)
+movies_df.to_sql(movies_table_name, engine, if_exists="append", index=False)
 
 
 conn.close()

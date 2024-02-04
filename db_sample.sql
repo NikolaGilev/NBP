@@ -1,13 +1,13 @@
 CREATE TABLE collections (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    movie_id INT,
+    movie_id INT
 );
 
 CREATE TABLE genres (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    movie_id INT,
+    movie_id INT
 );
 
 CREATE TABLE movies (
@@ -23,16 +23,19 @@ CREATE TABLE movies (
     popularity BIGINT,
     release_date DATE,
     revenue BIGINT,
-    runtime FLOAT,
+    runtime FLOAT
 );
 
-CREATE TABLE cast (
+CREATE TABLE "cast" (
     id SERIAL PRIMARY KEY,
+	credit_id VARCHAR(255),
+	cast_id VARCHAR(255),
     movie_id INT,
     name VARCHAR(255) NOT NULL,
     character VARCHAR(255) NOT NULL,
     gender INT
 );
+
 
 CREATE TABLE crew (
     id SERIAL PRIMARY KEY,
@@ -45,7 +48,7 @@ CREATE TABLE crew (
 
 CREATE TABLE keywords (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
-    movie_id INT,
+    name VARCHAR(255) NOT NULL,
+    movie_id INT
 );
 
