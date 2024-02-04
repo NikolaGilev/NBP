@@ -142,4 +142,12 @@ CREATE (:Collection {
 });
 ```
 
-Above example is for collections, but similar queries can be easily constructed for all the other nodes.
+Above example is for collections.cql, but similar queries can be easily constructed for all the other nodes.
+
+These files were not imported by hand, intead we used a script, i.e. create_neo4j_db.py. While running the script we encountered a memory error:
+
+```
+Error during execution: {code: Neo.TransientError.General.MemoryPoolOutOfMemoryError} {message: The allocation of an extra 2.0 MiB would use more than the limit 716.8 MiB. Currently using 715.0 MiB. dbms.memory.transaction.total.max threshold reached}
+```
+
+So we needed to set the transaction the limit to: dbms.memory.transaction.total.max=1000m, in the neo4j.conf file.

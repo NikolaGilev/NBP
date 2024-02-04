@@ -8,7 +8,7 @@ CREATE (:Movie {
   original_title: row.original_title,
   overview: row.overview,
   popularity: toFloat(row.popularity),
-  release_date: date(row.release_date, 'yyyy-MM-dd'),
+  release_date: row.release_date,
   revenue: toFloat(row.revenue),
   runtime: toInteger(row.runtime),
   title: row.title

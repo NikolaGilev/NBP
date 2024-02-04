@@ -12,20 +12,20 @@ def run_query(tx, query):
     tx.run(query)
 
 
-def execute_queries(session, query_files):
-    with session.begin_transaction() as tx:
-        for query_file in query_files:
+def execute_queries(session, query_files, query_folder):
+    for query_file in query_files:
+        with session.begin_transaction() as tx:
             query_path = os.path.join(query_folder, query_file)
             with open(query_path, "r") as file:
                 cypher_query = file.read()
                 try:
+                    print(cypher_query)
                     tx.run(cypher_query)
+                    tx.commit()
                 except Exception as e:
                     print(f"Error executing query in file {query_file}: {str(e)}")
                     tx.rollback()
                     break
-        else:
-            tx.commit()
 
 
 with GraphDatabase.driver(uri, auth=(username, password)) as driver:
@@ -39,8 +39,9 @@ with GraphDatabase.driver(uri, auth=(username, password)) as driver:
                 for file in os.listdir(query_relations_folder)
                 if file.endswith(".cql")
             ]
+            print(query_relations_files)
 
-            execute_queries(session, query_files)
-            execute_queries(session, query_relations_files)
+            execute_queries(session, query_files, query_folder)
+            execute_queries(session, query_relations_files, query_relations_folder)
         except Exception as e:
             print(f"Error during execution: {str(e)}")

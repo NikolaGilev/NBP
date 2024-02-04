@@ -1,4 +1,3 @@
-LOAD CSV WITH HEADERS FROM 'file:///cast.csv' AS row
-MATCH (m:Movie {id: toInteger(row.movie_id)})
-MATCH (a:Cast {actor_id: toInteger(row.id)})
-CREATE (m)-[:HAS_CAST]->(a);
+MATCH (m:Movie), (c:Cast)
+WHERE m.id = c.movie_id
+CREATE (m)-[:HAS_CAST]->(c);
