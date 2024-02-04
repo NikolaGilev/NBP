@@ -1,8 +1,12 @@
 # NBP
 
-# Postgres
+## Setting up the working environment
 
-install pyenv which is a python package version management tool popular in the python community.
+Pyenv is used to manage different Python versions, whereas Pipenv is used to manage Python packages. We will show a complete rundown of how to use them in our project below.
+
+### Pyenv
+
+Install pyenv which is a python version management tool popular in the python community.
 
 ```sh
 $ pip install pyenv-win
@@ -23,7 +27,7 @@ If Admin permissions aren't granted the following error will arise:
 
 ... File C:\Users\kok1\_\install-pyenv-win.ps1 cannot be loaded because running scripts is disabled on this system...
 
-In order to fix this we need to give power-shell Admin privilages so it can successfully run the script:
+In order to fix this we need to give power-shell Admin privileges so it can successfully run the script:
 
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser
@@ -31,10 +35,11 @@ Set-ExecutionPolicy -Scope CurrentUser
 
 When prompted for the "ExecutionPolicy", insert "RemoteSigned". Now rerun the first script and it should install pyenv.
 
-==============================================================================
+Now we can manage/install python version.
 
-TODO: Idk if above is even necessary for creating a pipenv
+### Pipenv
 
+In this project we are using python 3.10, so lets create a virtual environment with that version.
 run
 
 ```sh
@@ -45,13 +50,13 @@ You should get the following message:
 
 - "Successfully created virtual environment!"
 
-To activate this project's virtualenv, run the following:
+To activate this project's virtual environment, run the following:
 
 ```sh
 $ pipenv shell
 ```
 
-Now since we are in the virtual env we can start adding necessary dependencies. We can add them using this command:
+Now we are in the virtual environment and can start adding necessary dependencies. We can add them using this command:
 
 ```sh
 $ pipenv install %package_name%
@@ -62,6 +67,8 @@ the full list of installed packages will be in the "Pipfile" or we can generate 
 ```sh
 $ pipenv requirements > requirements.txt
 ```
+
+## Table Structure
 
 Tables look like this:
 
@@ -151,3 +158,20 @@ Error during execution: {code: Neo.TransientError.General.MemoryPoolOutOfMemoryE
 ```
 
 So we needed to set the transaction the limit to: dbms.memory.transaction.total.max=1000m, in the neo4j.conf file.
+
+After doing this we can check how many nodes were imported with:
+
+```cql
+MATCH (n)
+RETURN count(n) AS nodeCount;
+```
+
+we can see that we have imported 375431 nodes and if we want to see how relations between them look like:
+
+```cql
+MATCH (node1)--(node2)
+RETURN node1, node2
+LIMIT 1000;
+```
+
+![Image of how the node relations look and how many nodes are imported](images/nodes.PNG)
