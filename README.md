@@ -239,6 +239,9 @@ FROM movies
 WHERE budget > 60000000;
 ```
 
+> ![](images/postgres/pg_s_q1.PNG)
+> Total rows: 820 of 820; Query complete 00:00:04.422
+
 2. Select all cast members whose name is Robin Williams:
 
 CQL:
@@ -259,6 +262,9 @@ SELECT *
 FROM cast
 WHERE name = 'Robin Williams';
 ```
+
+> ![](images/postgres/pg_s_q2.PNG)
+> Total rows: 88 of 88; Query complete 00:00:00.251
 
 3. Select all crew whose job is Director:
 
@@ -281,6 +287,9 @@ FROM crew
 WHERE job = 'Director';
 ```
 
+> ![](images/postgres/pg_s_q3.PNG)
+> Total rows: 1000 of 18700; Query complete 00:00:00.397
+
 4. Select all genres that are Comedy:
 
 CQL:
@@ -302,26 +311,10 @@ FROM genres
 WHERE name = 'Comedy';
 ```
 
+> ![](images/postgres/pg_s_q4.PNG)
+> Total rows: 1000 of 52728; Query complete 00:00:00.248
+
 ### Join Queries
-
-1. Select movie nodes and all of their relations
-
-```cql
-MATCH (node1)--(node2)
-RETURN node1, node2
-LIMIT 1000;
-```
-
-```sql
-SELECT *
-FROM movies AS m
-JOIN movies_keywords AS mk ON m.movie_id = mk.movie_id
-JOIN movies_genres AS mg ON m.movie_id = mg.movie_id
-JOIN movies_crew AS mc ON m.movie_id = mc.movie_id
-JOIN movies_collections AS mcol ON m.movie_id = mcol.movie_id
-JOIN movies_cast AS mcast ON m.movie_id = mcast.movie_id
-LIMIT 1000;
-```
 
 1. Select all movies with cast and crew where Robin Williams is in the cast:
 
@@ -340,12 +333,15 @@ RETURN m, c, cr;
 PSQL:
 
 ```sql
-SELECT m., c., cr.*
+SELECT *
 FROM movies m
-JOIN cast c ON m.id = c.movie_id
-JOIN crew cr ON m.id = cr.movie_id
-WHERE c.name = 'Robin Williams';
+LEFT JOIN "cast" ca ON m.id = ca.movie_id
+LEFT JOIN crew ON m.id = crew.movie_id
+WHERE ca.name = 'Robin Williams';
 ```
+
+> ![](images/postgres/pg_j_q1.PNG)
+> Total rows: 144 of 144; Query complete 00:00:00.257
 
 2. Select all movies with genre Comedy and Robin Williams is in the cast:
 
@@ -364,12 +360,15 @@ RETURN m,c,g;
 PSQL:
 
 ```sql
-SELECT m.*, c.*, g.*
+SELECT *
 FROM movies m
-JOIN cast c ON m.id = c.movie_id
-JOIN genres g ON m.id = g.movie_id
-WHERE c.name = 'Robin Williams' AND g.name = 'Comedy';
+LEFT JOIN genres g ON m.id = g.movie_id
+LEFT JOIN "cast" ca ON m.id = ca.movie_id
+WHERE g.name = 'Comedy' AND ca.name = 'Robin Williams';
 ```
+
+> ![](images/postgres/pg_j_q2.PNG)
+> Total rows: 240 of 240; Query complete 00:00:00.180
 
 3. Select all movies with their cast, genre, crew, and keywords, where the genre is Drama:
 
@@ -389,13 +388,18 @@ RETURN m, c, g, crew, keyword;
 PSQL:
 
 ```sql
-SELECT movies.*, cast.*, genres.*, crew.*, keywords.*
-FROM movies
-JOIN cast ON movies.id = cast.movie_id
-JOIN genres ON movies.id = genres.movie_id AND genres.name = 'Drama'
-JOIN crew ON movies.id = crew.movie_id
-JOIN keywords ON movies.id = keywords.movie_id;
+SELECT *
+FROM movies m
+LEFT JOIN genres g ON m.id = g.movie_id
+LEFT JOIN "cast" ca ON m.id = ca.movie_id
+LEFT JOIN crew ON m.id = crew.movie_id
+LEFT JOIN keywords k ON m.id = k.movie_id
+WHERE g.name = 'Drama';
 ```
+
+<!-- > ![](images/postgres/pg_j_q3.PNG) -->
+
+No data
 
 ### Aggregation Queries
 
@@ -416,11 +420,10 @@ LIMIT 5;
 PSQL:
 
 ```sql
-SELECT k.name AS keyword_name, COUNT(mk.movie_id) AS movieCount
+SELECT k.name AS keyword, COUNT(*) AS keyword_count
 FROM keywords k
-JOIN movies_keywords mk ON k.name = mk.keyword_name
 GROUP BY k.name
-ORDER BY movieCount DESC
+ORDER BY keyword_count DESC
 LIMIT 5;
 ```
 
@@ -444,19 +447,17 @@ PSQL:
 
 ```sql
 WITH RankedMovies AS (
-  SELECT
-    g.name AS genre_name,
-    m.title,
-    m.revenue,
-    ROW_NUMBER() OVER (PARTITION BY g.name ORDER BY m.revenue DESC) AS rnk
-  FROM genres g
-  JOIN movies_genres mg ON g.genre_id = mg.genre_id
-  JOIN movies m ON mg.movie_id = m.movie_id
+    SELECT
+        m.*, g.name AS genre_name,
+        ROW_NUMBER() OVER
+          (PARTITION BY g.name ORDER BY
+            m.revenue DESC) AS row_num
+    FROM movies m LEFT JOIN genres g ON m.id = g.movie_id
 )
-SELECT genre_name, title, revenue
+SELECT *
 FROM RankedMovies
-WHERE rnk = 1
-ORDER BY genre_name;
+WHERE row_num = 1;
+
 ```
 
 3. Average Runtime of Movies Released Each Year:
@@ -476,13 +477,12 @@ ORDER BY releaseYear;
 PSQL:
 
 ```sql
-SELECT
-  SUBSTRING(m.release_date FROM 1 FOR 4) AS releaseYear,
-  AVG(m.runtime) AS averageRuntime
-FROM movies m
-WHERE m.release_date IS NOT NULL
-GROUP BY releaseYear
-ORDER BY releaseYear;
+SELECT EXTRACT(YEAR FROM release_date) AS release_year,
+       AVG(runtime) AS average_runtime
+FROM movies
+WHERE runtime IS NOT NULL
+GROUP BY release_year
+ORDER BY release_year;
 ```
 
 4. Number of Movies and Total Revenue for Each Cast Member in Comedy Genre:
@@ -501,18 +501,15 @@ ORDER BY totalRevenue DESC, movieCount DESC;
 PSQL:
 
 ```sql
-SELECT
-  c.name AS cast_name,
-  COUNT(m.movie_id) AS movieCount,
-  SUM(m.revenue) AS totalRevenue
-FROM cast c
-JOIN movies_cast mc ON c.cast_id = mc.cast_id
-JOIN movies m ON mc.movie_id = m.movie_id
-JOIN movies_genres mg ON m.movie_id = mg.movie_id
-JOIN genres g ON mg.genre_id = g.genre_id
-WHERE g.name = 'Comedy'
-GROUP BY c.name
-ORDER BY totalRevenue DESC, movieCount DESC;
+SELECT cast.name AS cast_member,
+    COUNT(DISTINCT movies.id) AS number_of_movies,
+    SUM(movies.revenue) AS total_revenue
+FROM movies
+JOIN "cast" ON movies.id = "cast".movie_id
+JOIN genres ON movies.id = genres.movie_id
+WHERE genres.name = 'Comedy'
+GROUP BY cast_member
+ORDER BY total_revenue DESC;
 ```
 
 ## Note:
@@ -536,7 +533,7 @@ JOIN keywords AS mk ON m.id = mk.movie_id
 JOIN genres AS mg ON m.id = mg.movie_id
 JOIN crew AS mc ON m.id = mc.movie_id
 JOIN collections AS mcol ON m.id = mcol.movie_id
-JOIN cast AS mcast ON m.id = mcast.movie_id
+JOIN "cast" AS c ON m.id = c.movie_id
 LIMIT 1000;
 ```
 
@@ -545,7 +542,7 @@ or
 ```sql
 SELECT *
 FROM movies AS m
-JOIN movies_keywords AS mk ON m.id = mk.movie_id
+JOIN keywords AS k ON m.id = k.movie_id
 LIMIT 1000;
 ```
 
