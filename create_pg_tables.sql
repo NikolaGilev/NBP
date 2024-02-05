@@ -21,7 +21,6 @@ CREATE TABLE movies (
     imdb_id VARCHAR(20) ,
     title VARCHAR(255) ,
     for_adults BOOLEAN,
-    collections_id INT,
     budget BIGINT,
     original_language VARCHAR(10) ,
     original_title VARCHAR(255) ,

@@ -4,10 +4,10 @@ import pandas as pd
 
 db_params = {
     "user": "postgres",
-    "password": "postgres",
+    "password": "123",
     "dbname": "nbp",
     "host": "localhost",
-    "port": 5433,
+    "port": 5432,
 }
 
 conn = psycopg2.connect(**db_params)
@@ -19,12 +19,12 @@ genres_csv_path = "./csvs/genres.csv"
 keywords_csv_path = "./csvs/keywords.csv"
 movies_csv_path = "./csvs/movies.csv"
 
-cast_df = pd.read_csv(cast_csv_path)
-collection_df = pd.read_csv(collection_csv_path)
-crew_df = pd.read_csv(crew_csv_path)
-genres_df = pd.read_csv(genres_csv_path)
-keywords_df = pd.read_csv(keywords_csv_path)
-movies_df = pd.read_csv(movies_csv_path)
+cast_df = pd.read_csv(cast_csv_path, on_bad_lines='skip')
+collection_df = pd.read_csv(collection_csv_path, on_bad_lines='skip')
+crew_df = pd.read_csv(crew_csv_path, on_bad_lines='skip')
+genres_df = pd.read_csv(genres_csv_path, on_bad_lines='skip')
+keywords_df = pd.read_csv(keywords_csv_path, on_bad_lines='skip')
+movies_df = pd.read_csv(movies_csv_path, on_bad_lines='skip')
 
 cast_table_name = "cast"
 collection_table_name = "collections"
