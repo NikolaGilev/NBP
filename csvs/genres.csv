@@ -1,4 +1,4 @@
-,id,name,movie_id
+ ,id,name,movie_id
 0,16,Animation,862
 1,35,Comedy,862
 2,10751,Family,862
@@ -44571,9 +44571,6 @@
 44569,28,Action,82663
 44570,53,Thriller,82663
 44571,18,Drama,82663
-44572,11176,Carousel Productions,1997-08-20
-44573,11602,Vision View Entertainment,1997-08-20
-44574,29812,Telescene Film Group Productions,1997-08-20
 44575,18,Drama,82693
 44576,35,Comedy,82693
 44577,10749,Romance,82693
@@ -62871,11 +62868,6 @@
 62869,18,Drama,73529
 62870,16,Animation,122662
 62871,878,Science Fiction,122662
-62872,2883,Aniplex,2012-09-29
-62873,7759,GoHands,2012-09-29
-62874,7760,BROSTA TV,2012-09-29
-62875,7761,Mardock Scramble Production Committee,2012-09-29
-62876,33751,Sentai Filmworks,2012-09-29
 62877,10770,TV Movie,50794
 62878,35,Comedy,50794
 62879,10751,Family,50794
@@ -74038,10 +74030,6 @@
 74036,28,Action,249260
 74037,27,Horror,249260
 74038,878,Science Fiction,249260
-74039,17161,Odyssey Media,2014-01-01
-74040,18012,Pulser Productions,2014-01-01
-74041,18013,Rogue State,2014-01-01
-74042,23822,The Cartel,2014-01-01
 74043,10752,War,151911
 74044,18,Drama,151911
 74045,99,Documentary,163890
