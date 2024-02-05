@@ -86,56 +86,67 @@ Tables look like this:
 
 ```sql
 CREATE TABLE collections (
-    id SERIAL PRIMARY KEY,
+    pkey SERIAL PRIMARY KEY,
+	id INT,
     name VARCHAR(255) NOT NULL,
-    movie_id INT,
+	poster_path VARCHAR(255),
+	backdrop_path VARCHAR(255),
+    movie_id INT
 );
 
 CREATE TABLE genres (
-    id SERIAL PRIMARY KEY,
+    pkey SERIAL PRIMARY KEY,
+	id INT,
     name VARCHAR(255) NOT NULL,
-    movie_id INT,
+    movie_id INT
 );
 
 CREATE TABLE movies (
     id SERIAL PRIMARY KEY,
-    imdb_id VARCHAR(20) NOT NULL,
-    title VARCHAR(255) NOT NULL,
+    imdb_id VARCHAR(20) ,
+    title VARCHAR(255) ,
     for_adults BOOLEAN,
     collections_id INT,
     budget BIGINT,
-    production_companies_id INT,
-    production_countries_id INT,
-    original_language VARCHAR(10) NOT NULL,
-    original_title VARCHAR(255) NOT NULL,
+    original_language VARCHAR(10) ,
+    original_title VARCHAR(255) ,
     overview TEXT,
-    popularity BIGINT,
+    popularity FLOAT,
     release_date DATE,
-    revenue BIGINT,
-    runtime FLOAT,
+    revenue FLOAT,
+    runtime FLOAT
 );
 
-CREATE TABLE cast (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE "cast" (
+	pkey SERIAL PRIMARY KEY,
+    id INT,
+	profile_path VARCHAR(255),
+	credit_id VARCHAR(255),
+	cast_id VARCHAR(255),
     movie_id INT,
     name VARCHAR(255) NOT NULL,
-    character VARCHAR(255) NOT NULL,
+    character VARCHAR(512),
     gender INT
 );
 
+
 CREATE TABLE crew (
-    id SERIAL PRIMARY KEY,
+    pkey SERIAL PRIMARY KEY,
+	id INT,
     movie_id INT,
-    department VARCHAR(255) NOT NULL,
-    job VARCHAR(255) NOT NULL,
+	credit_id VARCHAR(255),
+    department VARCHAR(255),
+    job VARCHAR(255),
     gender VARCHAR(255),
-    name VARCHAR(255) NOT NULL
+	profile_path VARCHAR(255),
+    name VARCHAR(255)
 );
 
 CREATE TABLE keywords (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
-    movie_id INT,
+	pkey SERIAL PRIMARY KEY,
+    id INT,
+    name VARCHAR(255),
+    movie_id INT
 );
 ```
 
@@ -167,7 +178,14 @@ The most difficult task was to create cast, crew and keywords. This data was str
 
 ## Importing data in PostgreSQL through csv files
 
-...
+We first needed to create tables by running the create_pg_tables.sql script (the contents of which can be seen above in the table structure).
+Next, running the python script create_pg_db.py populates the tables with values taken from the csvs we previously created (seen in the csvs folder).
+
+In this script we can see that after connecting to the local postgresql databse we create dataframes which we use to manipulate the columns of the csvs and drop unnecessary data. After this we simply specify the df and the table which needs to be populated like so:
+
+```py
+df.to_sql(table_name, engine, if_exists="append", index=False)
+```
 
 ## Importing data in Neo4j through csv files
 
@@ -397,9 +415,7 @@ LEFT JOIN keywords k ON m.id = k.movie_id
 WHERE g.name = 'Drama';
 ```
 
-<!-- > ![](images/postgres/pg_j_q3.PNG) -->
-
-No data
+> ![](images/postgres/pg_j_q3.PNG)
 
 ### Aggregation Queries
 
@@ -427,6 +443,9 @@ ORDER BY keyword_count DESC
 LIMIT 5;
 ```
 
+> ![](images/postgres/pg_a_q1.PNG)
+> Total rows: 5 of 5; Query complete 00:00:00.680
+
 2. Movies with the Highest Revenue in Each Genre
 
 CQL:
@@ -447,18 +466,21 @@ PSQL:
 
 ```sql
 WITH RankedMovies AS (
-    SELECT
-        m.*, g.name AS genre_name,
+    SELECT m.id AS movie_id, g.name AS genre,
+        m.title AS movie_title, m.revenue,
         ROW_NUMBER() OVER
-          (PARTITION BY g.name ORDER BY
-            m.revenue DESC) AS row_num
-    FROM movies m LEFT JOIN genres g ON m.id = g.movie_id
+			(PARTITION BY g.name ORDER BY m.revenue DESC) AS ranking
+    FROM movies m
+    JOIN genres g ON m.id = g.movie_id
+    WHERE m.revenue IS NOT NULL
 )
-SELECT *
+SELECT movie_id, genre, movie_title, revenue
 FROM RankedMovies
-WHERE row_num = 1;
-
+WHERE ranking = 1;
 ```
+
+> ![](images/postgres/pg_a_q2.PNG)
+> Total rows: 20 of 20; Query complete 00:00:00.935
 
 3. Average Runtime of Movies Released Each Year:
 
@@ -480,10 +502,13 @@ PSQL:
 SELECT EXTRACT(YEAR FROM release_date) AS release_year,
        AVG(runtime) AS average_runtime
 FROM movies
-WHERE runtime IS NOT NULL
+WHERE release_date IS NOT NULL AND runtime IS NOT NULL
 GROUP BY release_year
 ORDER BY release_year;
 ```
+
+> ![](images/postgres/pg_a_q3.PNG)
+> Total rows: 135 of 135; Query complete 00:00:03.657
 
 4. Number of Movies and Total Revenue for Each Cast Member in Comedy Genre:
 
@@ -501,16 +526,19 @@ ORDER BY totalRevenue DESC, movieCount DESC;
 PSQL:
 
 ```sql
-SELECT cast.name AS cast_member,
-    COUNT(DISTINCT movies.id) AS number_of_movies,
-    SUM(movies.revenue) AS total_revenue
-FROM movies
-JOIN "cast" ON movies.id = "cast".movie_id
-JOIN genres ON movies.id = genres.movie_id
-WHERE genres.name = 'Comedy'
-GROUP BY cast_member
+SELECT c.name AS cast_member,
+       COUNT(DISTINCT m.id) AS number_of_movies,
+       SUM(m.revenue) AS total_revenue
+FROM "cast" c
+JOIN movies m ON c.movie_id = m.id
+JOIN genres g ON m.id = g.movie_id
+WHERE g.name = 'Comedy'
+GROUP BY c.name
 ORDER BY total_revenue DESC;
 ```
+
+> ![](images/postgres/pg_a_q4.PNG)
+> Total rows: 1000 of 15331; Query complete 00:00:08.770
 
 ## Note:
 
