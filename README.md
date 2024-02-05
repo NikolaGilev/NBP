@@ -406,16 +406,25 @@ RETURN m, c, g, crew, keyword;
 PSQL:
 
 ```sql
-SELECT *
+SELECT
+    m.title AS movie_title,
+    c.name AS cast_name,
+    c.character,
+    g.name AS genre,
+    cr.name AS crew_name,
+    k.name AS keyword
 FROM movies m
-LEFT JOIN genres g ON m.id = g.movie_id
-LEFT JOIN "cast" ca ON m.id = ca.movie_id
-LEFT JOIN crew ON m.id = crew.movie_id
-LEFT JOIN keywords k ON m.id = k.movie_id
+JOIN genres g ON m.id = g.movie_id
+JOIN "cast" c ON m.id = CAST(c.movie_id AS INT)
+JOIN crew cr ON m.id = cr.movie_id
+JOIN keywords k ON m.id = k.movie_id
 WHERE g.name = 'Drama';
+
 ```
 
 > ![](images/postgres/pg_j_q3.PNG)
+Total rows: 1000 of 23635
+Query complete 00:00:00.237
 
 ### Aggregation Queries
 
