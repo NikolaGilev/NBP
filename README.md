@@ -467,7 +467,7 @@ RETURN genre, totalRevenue;
 ```
 
 > ![](images/neo4j/neo_a_q2.PNG)
-> Started streaming 91094 records after 17 ms and completed after 1846 ms, displaying first 1000 rows.
+> Started streaming 20 records after 21 ms and completed after 245 ms.
 
 PSQL:
 
