@@ -461,11 +461,9 @@ CQL:
 
 ```cql
 MATCH (g:Genre)<-[:BELONGS_TO]-(m:Movie)
-WITH g, m
-ORDER BY g.name, m.revenue DESC
-WITH g, COLLECT(m)[0] AS topMovie
-RETURN g.name, topMovie.title, topMovie.revenue
-ORDER BY g.name;
+WHERE m.revenue is not null
+WITH g.name AS genre, SUM(m.revenue) AS totalRevenue
+RETURN genre, totalRevenue;
 ```
 
 > ![](images/neo4j/neo_a_q2.PNG)
